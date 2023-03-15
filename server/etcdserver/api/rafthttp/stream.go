@@ -206,7 +206,13 @@ func (cw *streamWriter) run() {
 				unflushed += m.Size()
 
 				if len(msgc) == 0 || batched > streamBufSize/2 {
+					start := time.Now()
 					flusher.Flush()
+					flushTime.WithLabelValues(cw.peerID.String()).Observe(float64(time.Since(start).Microseconds()))
+					if batched > 0 {
+						batchSentCounts.WithLabelValues(cw.peerID.String()).Inc()
+						msgSentCounts.WithLabelValues(cw.peerID.String()).Add(float64(batched + 1))
+					}
 					sentBytes.WithLabelValues(cw.peerID.String()).Add(float64(unflushed))
 					unflushed = 0
 					batched = 0

@@ -163,6 +163,33 @@ var (
 	},
 		[]string{"To"},
 	)
+
+	batchSentCounts = prometheus.NewCounterVec(prometheus.CounterOpts{
+		Namespace: "etcd",
+		Subsystem: "network",
+		Name:      "peer_batch_sent_total",
+		Help:      "The total number of batches sent to peers.",
+	},
+		[]string{"To"},
+	)
+
+	msgSentCounts = prometheus.NewCounterVec(prometheus.CounterOpts{
+		Namespace: "etcd",
+		Subsystem: "network",
+		Name:      "peer_msg_sent_total",
+		Help:      "The total number of messages sent to peers.",
+	},
+		[]string{"To"},
+	)
+
+	flushTime = prometheus.NewHistogramVec(prometheus.HistogramOpts{
+		Namespace: "etcd",
+		Subsystem: "network",
+		Name:      "peer_flush_time_microseconds",
+		Help:      "Flush time histogram between peers in microseconds",
+	},
+		[]string{"To"},
+	)
 )
 
 func init() {
@@ -183,4 +210,8 @@ func init() {
 	prometheus.MustRegister(snapshotReceiveSeconds)
 
 	prometheus.MustRegister(rttSec)
+
+	prometheus.MustRegister(batchSentCounts)
+	prometheus.MustRegister(msgSentCounts)
+	prometheus.MustRegister(flushTime)
 }
